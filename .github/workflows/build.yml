@@ -29,7 +29,4 @@ jobs:
       run: dotnet test --no-restore --verbosity normal
 
     - name: SonarCloud Analysis
-      run: sonar-scanner
-      env:
-      sonar.projectKey: hetmaniukrostyslav_SS_UseCase1
-      sonar.organization: hetmaniukrostyslav
+      run: sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }}

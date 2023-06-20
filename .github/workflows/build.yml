@@ -30,3 +30,6 @@ jobs:
 
     - name: SonarCloud Analysis
       run: sonar-scanner
+      env:
+      sonar.projectKey: hetmaniukrostyslav_SS_UseCase1
+      sonar.organization: hetmaniukrostyslav

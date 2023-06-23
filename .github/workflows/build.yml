@@ -29,8 +29,7 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
 
     - name: Build .NET
-      run: dotnet restore
-           dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release
       working-directory: ./SS_UseCase1/
 
     - name: Run SonarCloud Analysis

@@ -36,7 +36,12 @@ namespace SS_UseCase1.Extensions
 
         public static IEnumerable<Country> TakeFirst(this IEnumerable<Country> source, int? take)
         {
-            return source.Take(take);
+            if (!take.HasValue)
+            {
+                return source;
+            }
+
+            return source.Take(take.Value);
         }
     }
 }

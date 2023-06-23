@@ -33,6 +33,11 @@ namespace SS_UseCase1.Extensions
                     throw new ArgumentException(nameof(order));
             }
         }
+
+        public static IEnumerable<Country> TakeFirst(this IEnumerable<Country> source, int? take)
+        {
+            return source.Take(take);
+        }
     }
 }
 

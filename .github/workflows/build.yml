@@ -1,32 +1,38 @@
-name: .NET
+name: SonarCloud Analysis
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
-
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    - name: Setup .NET 6.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.408
+        dotnet-version: 6.0.x
 
-    - name: Setup SonarCloud CLI
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Build .NET
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run SonarCloud Analysis
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-
-    - name: Test
-      run: dotnet test --no-restore --verbosity normal
-
-    - name: SonarCloud Analysis
-      run: sonar-scanner

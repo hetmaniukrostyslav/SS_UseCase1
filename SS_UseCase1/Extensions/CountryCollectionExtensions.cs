@@ -1,17 +1,28 @@
 ﻿using System;
+using System.Xml.Linq;
 using SS_UseCase1.Models;
 
 namespace SS_UseCase1.Extensions
 {
-	public static class CountryCollectionExtensions
-	{
+    public static class CountryCollectionExtensions
+    {
         public static IEnumerable<Country> FilterByName(this IEnumerable<Country> source, string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return source;
+            }
+
             return source.Where(x => x.Name.Common.Contains(name, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public static IEnumerable<Country> FilterByPopulation(this IEnumerable<Country> source, int population)
+        public static IEnumerable<Country> FilterByPopulation(this IEnumerable<Country> source, int? population)
         {
+            if (!population.HasValue || population == 0)
+            {
+                return source;
+            }
+
             population *= 1000000;
             return source.Where(x => x.Population <= population);
         }

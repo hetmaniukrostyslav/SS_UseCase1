@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SS_UseCase1.Extensions;
 using SS_UseCase1.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,11 +24,17 @@ namespace SS_UseCase1.Controllers
         }
 
         [HttpGet("list")]
-        public async Task<IActionResult> GetCountriesAsync([FromQuery] string? arg1, [FromQuery] int? arg2, [FromQuery] string? arg3)
+        public async Task<IActionResult> GetCountriesAsync([FromQuery] string? name, [FromQuery] int? population, [FromQuery] string? order, [FromHeader] int? take)
         {
             using var httpClient = _httpClientFactory.CreateClient();
             var responseJson = await httpClient.GetStringAsync("https://restcountries.com/v3.1/all");
-            return Ok(DeserializeJsonToCountries(responseJson));
+            var result = DeserializeJsonToCountries(responseJson)
+                            .FilterByName(name)
+                            .FilterByPopulation(population)
+                            .SortByName(order)
+                            .TakeFirst(take);
+
+            return Ok(result);
         }
 
 

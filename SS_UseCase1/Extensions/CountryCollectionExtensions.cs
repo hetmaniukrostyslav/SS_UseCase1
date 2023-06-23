@@ -15,6 +15,24 @@ namespace SS_UseCase1.Extensions
             population *= 1000000;
             return source.Where(x => x.Population <= population);
         }
+
+        public static IEnumerable<Country> SortByName(this IEnumerable<Country> source, string order)
+        {
+            if(string.IsNullOrWhiteSpace(order))
+            {
+                return source;
+            }
+
+            switch (order)
+            {
+                case "ascend":
+                    return source.OrderBy(x => x.Name.Common);
+                case "descend":
+                    return source.OrderByDescending(x => x.Name.Common);
+                default:
+                    throw new ArgumentException(nameof(order));
+            }
+        }
     }
 }
 

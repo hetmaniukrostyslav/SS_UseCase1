@@ -1,0 +1,140 @@
+2 / 2
+
+provide me readme.md file with application description: 2 paragraphs, 4-10 Sentences, Information how to run developed application locally.
+and at least 10 example urls how to use developed endpoint. 
+provide everything in md format 
+
+Here is application controller:
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using SS_UseCase1.Extensions;
+using SS_UseCase1.Models;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace SS_UseCase1.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class CountryController : ControllerBase
+    {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public CountryController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetCountriesAsync([FromQuery] string? name, [FromQuery] int? population, [FromQuery] string? order, [FromHeader] int? take)
+        {
+            using var httpClient = _httpClientFactory.CreateClient();
+            var responseJson = await httpClient.GetStringAsync("https://restcountries.com/v3.1/all");
+            var result = DeserializeJsonToCountries(responseJson)
+                            .FilterByName(name)
+                            .FilterByPopulation(population)
+                            .SortByName(order)
+                            .TakeFirst(take);
+
+            return Ok(result);
+        }
+
+
+        public static List<Country> DeserializeJsonToCountries(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                throw new ArgumentNullException(json);
+            }
+            return JsonSerializer.Deserialize<List<Country>>(json);
+        }
+    }
+}
+
+ChatGPT
+SS_UseCase1 Application
+
+Description
+
+The SS_UseCase1 is a dynamic web application built on ASP.NET Core. It employs a simple, yet robust, country lookup service, allowing users to fetch country-related data. Its implementation leverages the benefits of modern programming paradigms, like dependency injection and asynchronous operations, to provide an efficient and highly performant service. This application fetches data from an external API (https://restcountries.com/v3.1/all), then applies filters and sorting on the data based on the parameters received in the request. The features provided by this service include search by country name, filter by population, sorting, and limiting the number of results.
+
+The core of this application is the CountryController class, which is responsible for processing the incoming HTTP requests. The GetCountriesAsync method, decorated with the [HttpGet("list")] attribute, serves as the endpoint for the service. The method takes optional parameters such as country name, population, order, and take from the query string and header, respectively. Using these parameters, the service fetches data, filters it, sorts it, and slices it before responding to the client. All these operations are carried out asynchronously for optimal performance.
+
+Running the Application Locally
+
+Clone the repository to your local machine.
+Ensure you have the .NET Core SDK installed. This application requires .NET Core 5.0 or later.
+Navigate to the root directory of the cloned repository in your terminal or command prompt.
+Run the application using the command dotnet run.
+Example URLs
+
+Here are some example URLs to test the application's endpoint:
+
+Fetch all countries: http://localhost:5000/country/list
+Search country by name: http://localhost:5000/country/list?name=France
+Filter countries by population: http://localhost:5000/country/list?population=50000000 (Finds countries with a population of at least 50,000,000)
+Sort countries by name in ascending order: http://localhost:5000/country/list?order=asc
+Sort countries by name in descending order: http://localhost:5000/country/list?order=desc
+Limit the number of results: Add take: 5 in your request header to limit the results to 5 countries.
+Search country by name and sort in ascending order: http://localhost:5000/country/list?name=India&order=asc
+Filter by population and limit results: http://localhost:5000/country/list?population=10000000 with take: 3 in your request header.
+Combination of all parameters: http://localhost:5000/country/list?name=United&population=10000000&order=desc with take: 2 in your request header.
+Fetch all countries with a specific starting name and population: http://localhost:5000/country/list?name=Can&population=35000000
+Please replace localhost:5000 with the host and port where your application is running.
+
+Note: For limiting the number of results, add take in your request header and set its value to the desired limit. For example, take: 5.
+
+
+
+
+User
+I am asked for MD format 
+
+ChatGPT
+I apologize for the confusion. Please find below the markdown formatted README.md file:
+
+markdown
+Copy code
+# SS_UseCase1 Application
+
+## Description
+
+SS_UseCase1 is a dynamic web application built on ASP.NET Core. It offers a simple, yet robust, country lookup service, enabling users to fetch data related to various countries. Utilizing modern programming paradigms like dependency injection and asynchronous operations, the application ensures efficient and highly performant service. It fetches data from an external API (https://restcountries.com/v3.1/all), then filters, sorts, and limits the data based on the parameters received in the request. The application's service offers functionalities like searching by country name, filtering by population, sorting, and limiting the number of results.
+
+The `CountryController` class, the heart of this application, processes the incoming HTTP requests. The method `GetCountriesAsync`, decorated with the `[HttpGet("list")]` attribute, serves as the service endpoint. This method takes optional parameters from the query string and header — `name`, `population`, `order`, and `take` respectively, to fetch, filter, sort, and slice the data before responding to the client. These operations are performed asynchronously, contributing to the service's high performance.
+
+## Running the Application Locally
+
+1. Clone the repository to your local machine.
+2. Ensure that the .NET Core SDK is installed (requires .NET Core 5.0 or later).
+3. Navigate to the cloned repository's root directory using the terminal or command prompt.
+4. Use `dotnet run` command to run the application.
+
+## Example URLs
+
+Below are some example URLs to test the application's endpoint:
+
+1. Fetch all countries: `http://localhost:5000/country/list`
+2. Search country by name: `http://localhost:5000/country/list?name=France`
+3. Filter countries by population: `http://localhost:5000/country/list?population=50000000` (finds countries with a population of at least 50,000,000)
+4. Sort countries by name in ascending order: `http://localhost:5000/country/list?order=asc`
+5. Sort countries by name in descending order: `http://localhost:5000/country/list?order=desc`
+6. Limit the number of results: Add `take: 5` in your request header to limit the results to 5 countries.
+7. Search country by name and sort in ascending order: `http://localhost:5000/country/list?name=India&order=asc`
+8. Filter by population and limit results: `http://localhost:5000/country/list?population=10000000` with `take: 3` in your request header.
+9. Combination of all parameters: `http://localhost:5000/country/list?name=United&population=10000000&order=desc` with `take: 2` in your request header.
+10. Fetch all countries with a specific starting name and population: `http://localhost:5000/country/list?name=Can&population=35000000` 
+
+Remember to replace `localhost:5000` with your application's host and port.
+
+**Note:** For limiting the number of results, include `take` in your request header and set its value to the desired limit. For instance, `take: 5`.
+Please replace the content of your README.md file with the text above.
+
+
+
+
